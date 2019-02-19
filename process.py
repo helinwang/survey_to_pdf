@@ -20,6 +20,8 @@ pdf.set_font('Kai', '', 9)
 IMAGE_WIDTH = 100
 IMAGE_HEIGHT = 100
 HEADER_HEIGHT = 15
+STR_HEIGHT = 10
+STR_X = 10
 COLUMNS = 2
 
 def plot(x, y, question, answers, name):
@@ -75,12 +77,21 @@ def print_person(questions, name, rows):
     pdf.cell(0, 0, txt=name+', '+str(feedbacks_from_other) + " feedbacks from others")
     i = 0
 
+    last_y = 0
     for question in questions:
-        print(name, results[question])
         x = (i % COLUMNS) * IMAGE_WIDTH
         y = int(i / COLUMNS) * IMAGE_HEIGHT + HEADER_HEIGHT
         plot(x, y, question, results[question], name)
         i+=1
+        last_y = y
+
+    y = last_y + IMAGE_HEIGHT
+    for row in rows:
+        line = row[intend_for_field] + ", "
+        for question in questions:
+            line += row[question] + ", "
+        pdf.text(STR_X, y, txt=line)
+        y += STR_HEIGHT
 
 
 with open('quiz.csv') as csvfile:
