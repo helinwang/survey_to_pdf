@@ -42,18 +42,16 @@ def plot(x, y, question, answers):
     plt.clf()
     pdf.image(file_name,x,y,IMAGE_WIDTH,IMAGE_HEIGHT)
 
-with open('quiz.csv') as csvfile:
-    reader = csv.DictReader(csvfile)
-    results = {}
-    questions = []
-    for question in reader.fieldnames:
-        if question in skip_fields:
-            continue
-        questions.append(question)
-        results[question] = []
 
-    for row in reader:
+def persons(rows):
+    pass
+
+def print_person(questions, rows):
+    results = {}
+    for row in rows:
         for question in questions:
+            if question not in results:
+                results[question] = []
             results[question].append(row[question])
 
     pdf.add_page()
@@ -62,7 +60,21 @@ with open('quiz.csv') as csvfile:
     for question in questions:
         x = (i % COLUMNS) * IMAGE_WIDTH
         y = int(i / COLUMNS) * IMAGE_HEIGHT + HEADER_HEIGHT
-        print(x, y)
         plot(x, y, question, results[question])
         i+=1
+
+
+with open('quiz.csv') as csvfile:
+    reader = csv.DictReader(csvfile)
+    questions = []
+    for question in reader.fieldnames:
+        if question in skip_fields:
+            continue
+        questions.append(question)
+
+    rows = []
+    for row in reader:
+        rows.append(row)
+        
+    print_person(questions, rows)
     pdf.output("pages.pdf", "F")
